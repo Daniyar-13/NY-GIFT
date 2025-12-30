@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь 2026 - Месячные страницы</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================
+           МЯГКИЕ ПЕРЕХОДЫ С ЧЕРНЫМИ ПОЛОСАМИ
+           ======================================== */
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pageExit {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideInTop {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInBottom {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        html.page-exit body {
+            animation: pageExit 1s ease-in-out forwards;
+        }
+
+        html.page-exit::before,
+        html.page-exit::after {
+            content: '';
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 50vh;
+            background: #000;
+            z-index: 9999;
+            animation: 1s ease-in-out forwards;
+        }
+
+        html.page-exit::before {
+            top: 0;
+            animation-name: slideInTop;
+        }
+
+        html.page-exit::after {
+            bottom: 0;
+            animation-name: slideInBottom;
+        }
+
+        body {
+            animation: pageEnter 1.2s ease-out;
+        }
+
+        :root {
+            --color-primary: #8B4F5C;
+            --color-secondary: #D4A5A5;
+            --color-accent: #C49B73;
+            --color-background: #F5F1ED;
+            --color-text: #2C2C2C;
+            --color-text-light: #4A4A4A;
+
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --font-script: 'Great Vibes', cursive;
+
+            --font-size-h1: 3.5rem;
+            --font-size-h2: 2.5rem;
+            --font-size-h3: 1.75rem;
+            --font-size-body: 1.125rem;
+            --font-size-small: 0.875rem;
+
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --spacing-xxl: 4rem;
+
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.15);
+            --blur-backdrop: blur(12px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-size: var(--font-size-body);
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--color-text);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           ПАДАЮЩИЙ СНЕГ
+           ======================================== */
+
+        .snowflakes {
+            position: fixed;
+            top: -10%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10%;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.5rem;
+            animation: fall linear infinite;
+        }
+
+        .snowflake:nth-child(1) { left: 10%; animation-duration: 10s; animation-delay: 0s; }
+        .snowflake:nth-child(2) { left: 20%; animation-duration: 12s; animation-delay: 2s; font-size: 1.2rem; }
+        .snowflake:nth-child(3) { left: 30%; animation-duration: 8s; animation-delay: 4s; font-size: 1.8rem; }
+        .snowflake:nth-child(4) { left: 40%; animation-duration: 14s; animation-delay: 1s; }
+        .snowflake:nth-child(5) { left: 50%; animation-duration: 11s; animation-delay: 3s; font-size: 1.3rem; }
+        .snowflake:nth-child(6) { left: 60%; animation-duration: 9s; animation-delay: 5s; }
+        .snowflake:nth-child(7) { left: 70%; animation-duration: 13s; animation-delay: 2s; font-size: 1.6rem; }
+        .snowflake:nth-child(8) { left: 80%; animation-duration: 10s; animation-delay: 4s; }
+        .snowflake:nth-child(9) { left: 90%; animation-duration: 12s; animation-delay: 1s; font-size: 1.4rem; }
+        .snowflake:nth-child(10) { left: 95%; animation-duration: 11s; animation-delay: 3s; }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+
+        /* ========================================
+           ОСНОВНОЙ КОНТЕЙНЕР
+           ======================================== */
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: var(--spacing-xxl) var(--spacing-lg);
+        }
+
+        /* ========================================
+           ЗАГОЛОВОК СТРАНИЦЫ
+           ======================================== */
+
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xxl);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: var(--spacing-sm);
+            text-shadow: 
+                3px 3px 8px rgba(0, 0, 0, 0.5),
+                1px 1px 3px rgba(0, 0, 0, 0.3),
+                -1px -1px 3px rgba(255, 255, 255, 0.1);
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.2));
+        }
+
+        .page-subtitle {
+            font-family: var(--font-body);
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 0.05em;
+        }
+
+        /* ========================================
+           СЕТКА МЕСЯЦЕВ
+           ======================================== */
+
+        .months-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        /* ========================================
+           КАРТОЧКА МЕСЯЦА
+           ======================================== */
+
+        .month-card {
+            padding: var(--spacing-lg);
+            border-radius: 20px;
+
+            background: rgba(45, 60, 95, 0.5);
+            backdrop-filter: var(--blur-backdrop);
+            -webkit-backdrop-filter: var(--blur-backdrop);
+
+            border: 2px solid rgba(212, 165, 165, 0.3);
+
+            box-shadow: var(--shadow-card);
+
+            transition: var(--transition-smooth);
+
+            animation: fadeInUp 1s ease-out;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 280px;
+            cursor: pointer;
+        }
+
+        .month-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: var(--shadow-hover);
+            background: rgba(45, 60, 95, 0.7);
+            border-color: rgba(196, 155, 115, 0.6);
+        }
+
+        .month-card:nth-child(1) { animation-delay: 0.1s; }
+        .month-card:nth-child(2) { animation-delay: 0.2s; }
+        .month-card:nth-child(3) { animation-delay: 0.3s; }
+        .month-card:nth-child(4) { animation-delay: 0.4s; }
+        .month-card:nth-child(5) { animation-delay: 0.5s; }
+        .month-card:nth-child(6) { animation-delay: 0.6s; }
+        .month-card:nth-child(7) { animation-delay: 0.7s; }
+        .month-card:nth-child(8) { animation-delay: 0.8s; }
+        .month-card:nth-child(9) { animation-delay: 0.9s; }
+        .month-card:nth-child(10) { animation-delay: 1s; }
+        .month-card:nth-child(11) { animation-delay: 1.1s; }
+        .month-card:nth-child(12) { animation-delay: 1.2s; }
+
+        /* ========================================
+           ЭЛЕМЕНТЫ ВНУТРИ КАРТОЧКИ
+           ======================================== */
+
+        .month-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-md);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .month-name {
+            font-family: var(--font-heading);
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .month-theme {
+            font-family: var(--font-body);
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .month-description {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           КНОПКА ОТКРЫТИЯ
+           ======================================== */
+
+        .btn-open {
+            display: inline-block;
+            padding: var(--spacing-sm) var(--spacing-lg);
+
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+
+            color: #1a1a2e;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: 0.03em;
+
+            border: none;
+            border-radius: 25px;
+
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+
+            transition: var(--transition-smooth);
+
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-open:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #FFA500, #FFD700);
+        }
+
+        .btn-open:active {
+            transform: translateY(0) scale(1.02);
+        }
+
+
+        /* NEW: гирлянда по краям */
+.garland {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.garland-line {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    top: 12px;
+    left: 0;
+    background:
+      radial-gradient(circle at 5% 40%, #ffb3c6 0 4px, transparent 5px),
+      radial-gradient(circle at 20% 70%, #ffd6a5 0 4px, transparent 5px),
+      radial-gradient(circle at 35% 30%, #caffbf 0 4px, transparent 5px),
+      radial-gradient(circle at 50% 70%, #9bf6ff 0 4px, transparent 5px),
+      radial-gradient(circle at 65% 40%, #a0c4ff 0 4px, transparent 5px),
+      radial-gradient(circle at 80% 70%, #bdb2ff 0 4px, transparent 5px),
+      radial-gradient(circle at 95% 35%, #ffadad 0 4px, transparent 5px);
+    opacity: 0.9;
+}
+
+/* боковые гирлянды */
+.garland-side {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 26px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.garland-side.left {
+    left: 8px;
+    background:
+      radial-gradient(circle at 40% 5%, #ffb3c6 0 4px, transparent 5px),
+      radial-gradient(circle at 60% 20%, #ffd6a5 0 4px, transparent 5px),
+      radial-gradient(circle at 40% 40%, #caffbf 0 4px, transparent 5px),
+      radial-gradient(circle at 60% 60%, #9bf6ff 0 4px, transparent 5px),
+      radial-gradient(circle at 40% 80%, #a0c4ff 0 4px, transparent 5px),
+      radial-gradient(circle at 60% 95%, #ffadad 0 4px, transparent 5px);
+}
+
+.garland-side.right {
+    right: 8px;
+    background:
+      radial-gradient(circle at 60% 5%, #ffb3c6 0 4px, transparent 5px),
+      radial-gradient(circle at 40% 20%, #ffd6a5 0 4px, transparent 5px),
+      radial-gradient(circle at 60% 40%, #caffbf 0 4px, transparent 5px),
+      radial-gradient(circle at 40% 60%, #9bf6ff 0 4px, transparent 5px),
+      radial-gradient(circle at 60% 80%, #a0c4ff 0 4px, transparent 5px),
+      radial-gradient(circle at 40% 95%, #ffadad 0 4px, transparent 5px);
+}
+      /* ========================================
+   КНОПКА НАЗАД
+   ========================================= */
+
+.back-button-container {
+    text-align: center;
+    margin-top: var(--spacing-xxl);
+    animation: fadeInUp 2s ease-out;
+}
+
+/* CHANGED: стиль кнопки назад → круглая прозрачная со звездой */
+.btn-back {
+    display: inline-flex;                 /* CHANGED */
+    align-items: center;                  /* CHANGED */
+    justify-content: center;              /* CHANGED */
+    width: 60px;                          /* CHANGED */
+    height: 60px;                         /* CHANGED */
+    padding: 0;                           /* CHANGED */
+
+    background: rgba(255,255,255,0.12);   /* CHANGED */
+    color: #FFD700;                       /* CHANGED */
+    font-family: var(--font-body);
+    font-size: 1.7rem;                    /* CHANGED */
+    font-weight: 600;                     /* CHANGED */
+    text-decoration: none;
+    letter-spacing: 0.05em;
+
+    border: 2px solid rgba(255, 255, 255, 0.35); /* CHANGED */
+    border-radius: 50%;                   /* CHANGED */
+
+    box-shadow: 0 6px 22px rgba(0,0,0,0.35);     /* CHANGED */
+
+    transition: var(--transition-smooth);
+
+    cursor: pointer;
+}
+
+/* CHANGED: hover для круглой кнопки */
+.btn-back:hover {
+    transform: translateY(-3px) scale(1.08);     /* CHANGED */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);     /* CHANGED */
+    background: rgba(255,255,255,0.22);          /* CHANGED */
+    border-color: rgba(255, 255, 255, 0.6);      /* CHANGED */
+}
+
+        /* ========================================
+           АНИМАЦИИ
+           ======================================== */
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           АДАПТИВНОСТЬ
+           ======================================== */
+
+        @media (max-width: 1024px) {
+            .months-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--spacing-lg);
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .months-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-subtitle {
+                font-size: 1.125rem;
+            }
+
+            .month-card {
+                min-height: 200px;
+                padding: var(--spacing-md);
+            }
+
+            .month-icon {
+                font-size: 3rem;
+            }
+
+            .month-name {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Падающий снег -->
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+    </div>
+
+    <!-- NEW: гирлянды по краям -->
+<div class="garland">
+    <div class="garland-line"></div>
+</div>
+<div class="garland-side left"></div>
+<div class="garland-side right"></div>
+
+    <!-- Основной контент -->
+    <div class="container">
+
+        <!-- Заголовок -->
+        <div class="page-header">
+            <h1 class="page-title">С Новым 2026 Годом! 🔔</h1>
+            <p class="page-subtitle">Календарь воспоминаний и поздравлений</p>
+        </div>
+
+        <!-- Сетка месяцев -->
+        <div class="months-grid">
+
+            <!-- Январь -->
+            <div class="month-card">
+                <div class="month-icon">🚂</div>
+                <div class="month-name">Январь</div>
+                <div class="month-theme">Новогодний экспресс воспоминаний</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'january')">Открыть</button>
+            </div>
+
+            <!-- Февраль -->
+            <div class="month-card">
+                <div class="month-icon">💝</div>
+                <div class="month-name">Февраль</div>
+                <div class="month-theme">Месяц любви</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'february')">Открыть</button>
+            </div>
+
+            <!-- Март -->
+            <div class="month-card">
+                <div class="month-icon">🌸</div>
+                <div class="month-name">Март</div>
+                <div class="month-theme">Весеннее пробуждение</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'march')">Открыть</button>
+            </div>
+
+            <!-- Апрель -->
+            <div class="month-card">
+                <div class="month-icon">🌧️</div>
+                <div class="month-name">Апрель</div>
+                <div class="month-theme">Апрельские дожди</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'april')">Открыть</button>
+            </div>
+
+            <!-- Май -->
+            <div class="month-card">
+                <div class="month-icon">🌺</div>
+                <div class="month-name">Май</div>
+                <div class="month-theme">Майские цветы</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'may')">Открыть</button>
+            </div>
+
+            <!-- Июнь -->
+            <div class="month-card">
+                <div class="month-icon">☀️</div>
+                <div class="month-name">Июнь</div>
+                <div class="month-theme">Летнее солнце</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'june')">Открыть</button>
+            </div>
+
+            <!-- Июль -->
+            <div class="month-card">
+                <div class="month-icon">🏖️</div>
+                <div class="month-name">Июль</div>
+                <div class="month-theme">Отпуск и приключения</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'july')">Открыть</button>
+            </div>
+
+            <!-- Август -->
+            <div class="month-card">
+                <div class="month-icon">🍉</div>
+                <div class="month-name">Август</div>
+                <div class="month-theme">Вкус лета</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'august')">Открыть</button>
+            </div>
+
+            <!-- Сентябрь -->
+            <div class="month-card">
+                <div class="month-icon">🍂</div>
+                <div class="month-name">Сентябрь</div>
+                <div class="month-theme">Золотая осень</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'september')">Открыть</button>
+            </div>
+
+            <!-- Октябрь -->
+            <div class="month-card">
+                <div class="month-icon">🎃</div>
+                <div class="month-name">Октябрь</div>
+                <div class="month-theme">Осенние краски</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'october')">Открыть</button>
+            </div>
+
+            <!-- Ноябрь -->
+            <div class="month-card">
+                <div class="month-icon">🍁</div>
+                <div class="month-name">Ноябрь</div>
+                <div class="month-theme">Уютная осень</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'november')">Открыть</button>
+            </div>
+
+            <!-- Декабрь -->
+            <div class="month-card">
+                <div class="month-icon">🎄</div>
+                <div class="month-name">Декабрь</div>
+                <div class="month-theme">Новогодняя сказка</div>
+                <div class="month-description"></div>
+                <button class="btn-open" onclick="openMonth(event, 'december')">Открыть</button>
+            </div>
+
+        </div>
+
+      <div class="back-button-container">
+    <!-- CHANGED: текст на иконку звезды -->
+    <a href="index.html" class="btn-back" onclick="handlePageTransition(event)">
+        ★
+    </a>
+</div>
+
+    </div>
+
+    <script>
+        /* ========================================
+           МЯГКИЕ ПЕРЕХОДЫ С ЧЕРНЫМИ ПОЛОСАМИ
+           ======================================== */
+
+        function handlePageTransition(event) {
+            event.preventDefault();
+            const href = event.target.href;
+
+            document.documentElement.classList.add('page-exit');
+
+            setTimeout(() => {
+                window.location.href = href;
+            }, 1000);
+        }
+
+        function openMonth(event, monthName) {
+            event.preventDefault();
+
+            document.documentElement.classList.add('page-exit');
+
+            setTimeout(() => {
+                window.location.href = monthName + '.html';
+            }, 1000);
+        }
+
+        /* ========================================
+           ДИНАМИЧЕСКОЕ СОЗДАНИЕ СНЕЖИНОК
+           ======================================== */
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const snowflakesContainer = document.querySelector('.snowflakes');
+
+            function createSnowflake() {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                snowflake.textContent = Math.random() > 0.5 ? '❅' : '❆';
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                snowflake.style.fontSize = (Math.random() * 0.8 + 1) + 'rem';
+                snowflake.style.opacity = Math.random() * 0.6 + 0.4;
+
+                if (snowflakesContainer) {
+                    snowflakesContainer.appendChild(snowflake);
+                }
+
+                setTimeout(() => {
+                    snowflake.remove();
+                }, (parseFloat(snowflake.style.animationDuration) + parseFloat(snowflake.style.animationDelay)) * 1000);
+            }
+
+            if (snowflakesContainer) {
+                setInterval(createSnowflake, 800);
+            }
+
+            // Hover эффект для карточек
+            const cards = document.querySelectorAll('.month-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = (y - centerY) / 30;
+                    const rotateY = (centerX - x) / 30;
+
+                    card.style.transform = `
+                        perspective(1000px) 
+                        rotateX(${rotateX}deg) 
+                        rotateY(${rotateY}deg)
+                        translateY(-10px)
+                        scale(1.05)
+                    `;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

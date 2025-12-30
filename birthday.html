@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Март | Скоро весна, 8 марта и твой День Рождения!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Плавный переход с чёрными полосами, как на других страницах ===== */
+    @keyframes pageExit {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes slideInTop {
+      from { transform: translateY(-100%); }
+      to   { transform: translateY(0); }
+    }
+    @keyframes slideInBottom {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    html.page-exit body {
+      animation: pageExit 1s ease-in-out forwards;
+    }
+    html.page-exit::before,
+    html.page-exit::after {
+      content: '';
+      position: fixed;
+      left: 0;
+      width: 100%;
+      height: 50vh;
+      background: #000;
+      z-index: 9999;
+      animation: 1s ease-in-out forwards;
+    }
+    html.page-exit::before {
+      top: 0;
+      animation-name: slideInTop;
+    }
+    html.page-exit::after {
+      bottom: 0;
+      animation-name: slideInBottom;
+    }
+
+    body, html {
+      opacity: 1;
+      transition: opacity 0.48s cubic-bezier(.44,1.07,.69,.93);
+    }
+    body.fadeout {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: url('images/march.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(180deg, rgba(224,247,233,0.35) 0%, rgba(254,249,231,0.55) 50%, rgba(252,243,207,0.45) 100%);
+      z-index: 0; pointer-events: none;
+    }
+    .month-title {
+      margin-top: 48px; text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem; color: #1b4332; letter-spacing: 2.5px;
+      text-shadow: 0 3px 18px rgba(255,255,255,0.9);
+      position: relative; z-index: 20;
+    }
+    .spring-section {
+      display: flex; flex-direction: column; align-items: center;
+      margin-top: 80px; position: relative; z-index: 20;
+    }
+    .spring-card {
+      max-width: 560px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 32px;
+      box-shadow: 0 12px 45px rgba(100,150,100,0.2);
+      border: 3px solid #b7e4c7;
+      padding: 42px 38px 36px 38px;
+      text-align: center;
+      position: relative;
+      margin-bottom: 40px;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .spring-card:hover { transform: scale(1.02); }
+    .spring-card.kissing { animation: kissAnimation 1.5s ease-in-out forwards; }
+
+    @keyframes kissAnimation {
+      0% { transform: scale(1); opacity: 1;}
+      30% { transform: scale(0.5); opacity: 0.8;}
+      50% { transform: scale(0.1); opacity: 0;}
+      100% { transform: scale(0); opacity: 0;}
+    }
+
+    .kiss-photo {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 0; height: 0; z-index: 1000;
+      opacity: 0; pointer-events: none;
+      background: url('images/kiss-photo.png') no-repeat center center;
+      background-size: cover; border-radius: 50%;
+      box-shadow: 0 0 50px rgba(255,105,180,0.8);
+    }
+    .kiss-photo.active { animation: kissPhotoZoom 1.5s ease-out forwards; }
+
+    @keyframes kissPhotoZoom {
+      0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); width: 0; height: 0; opacity: 0;}
+      30% { transform: translate(-50%, -50%) scale(1) rotate(5deg); width: 200px; height: 200px; opacity: 1;}
+      60% { transform: translate(-50%, -50%) scale(2.5) rotate(-3deg); width: 500px; height: 500px; opacity: 1;}
+      100% { transform: translate(-50%, -50%) scale(10) rotate(0deg); width: 2000px; height: 2000px; opacity: 0;}
+    }
+
+    .spring-card h2 {
+      font-family: 'Playfair Display', serif;
+      color: #2d6a4f; margin-bottom: 20px;
+      font-size: 2.1rem; letter-spacing: 1.8px;
+    }
+    .birthday-highlight {
+      font-size: 2.8rem;
+      font-family: 'Playfair Display', serif;
+      font-weight: bold; color: #40916c;
+      margin: 22px 0;
+      text-shadow: 0 3px 12px rgba(64,145,108,0.3);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1);}
+      50% { transform: scale(1.08);}
+    }
+    .spring-card p {
+      font-size: 1.2rem; color: #52796f; font-weight: 500;
+      margin: 18px 0 12px 0; line-height: 1.7;
+    }
+    .spring-card .spring-hint {
+      display: block; margin-top: 26px; color: #74c69d;
+      font-size: 1.05rem; font-style: italic;
+      letter-spacing: 1px; font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .flowers {
+      position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 14px; pointer-events: none; font-size: 2.2rem;
+    }
+    .flower { animation: bounceFlower 4.2s ease-in-out infinite;
+      filter: drop-shadow(0 3px 8px rgba(150,200,150,0.4));}
+    .flower:nth-child(2) { animation-delay: 1.2s;}
+    .flower:nth-child(3) { animation-delay: 2.4s;}
+
+    @keyframes bounceFlower {
+      0% { transform: translateY(0) rotate(0deg) scale(1);}
+      50% { transform: translateY(-16px) rotate(8deg) scale(1.15);}
+      100% { transform: translateY(0) rotate(0deg) scale(1);}
+    }
+
+    .floating-flower {
+      position: fixed; font-size: 3rem; z-index: 15;
+      animation: floatFlower 11s ease-in-out infinite;
+      opacity: 0.8;
+      filter: drop-shadow(0 4px 12px rgba(200,180,180,0.4));
+      cursor: pointer; transition: transform 0.2s ease;
+      pointer-events: auto;
+      border: 3px solid #ffeb3b;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .floating-flower:hover { transform: scale(1.3); }
+
+    .f1 { top: 12%; left: 3%;  animation-delay: 0s;}
+    .f2 { top: 28%; left: 18%; animation-delay: 1.5s;}
+    .f3 { top: 45%; left: 5%;  animation-delay: 3s;}
+    .f4 { top: 62%; left: 22%; animation-delay: 4.5s;}
+    .f5 { top: 78%; left: 8%;  animation-delay: 6s;}
+    .f6 { top: 15%; right: 4%;  animation-delay: 0.8s;}
+    .f7 { top: 32%; right: 20%; animation-delay: 2.3s;}
+    .f8 { top: 50%; right: 6%;  animation-delay: 3.8s;}
+    .f9 { top: 68%; right: 24%; animation-delay: 5.3s;}
+    .f10{ top: 85%; right: 10%; animation-delay: 6.8s;}
+
+    @keyframes floatFlower {
+      0% { transform: translateY(0) rotate(0deg);}
+      50%{ transform: translateY(-22px) rotate(12deg);}
+      100%{transform: translateY(0) rotate(0deg);}
+    }
+
+    .popup-photo {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 0; height: 0;
+      z-index: 2000; opacity: 0;
+      border-radius: 20px;
+      box-shadow: 0 0 60px rgba(0,0,0,0.5);
+      pointer-events: none;
+      background-size: cover;
+      background-position: center;
+    }
+    .popup-photo.active { animation: popupZoom 2s ease-out forwards;}
+
+    @keyframes popupZoom {
+      0% {transform: translate(-50%, -50%) scale(0) rotate(-10deg);width: 0;height: 0;opacity: 0;}
+      20% {transform: translate(-50%, -50%) scale(1.1) rotate(5deg);width: 400px;height: 400px;opacity: 1;}
+      80% {transform: translate(-50%, -50%) scale(1) rotate(-2deg);width: 400px;height: 400px;opacity: 1;}
+      100%{transform: translate(-50%, -50%) scale(0) rotate(0deg);width: 0;height: 0;opacity: 0;}
+    }
+
+    @media (max-width: 750px) {
+      .spring-card {max-width:94vw; padding:28px 6vw;}
+      .month-title { font-size: 1.3rem;}
+      .floating-flower {font-size:2rem;}
+      .birthday-highlight {font-size: 2rem;}
+    }
+
+    .nav-btn {
+      position: fixed; bottom: 32px;
+      width: 54px; height: 54px;
+      background: rgba(255,255,255,0.95);
+      border: 2px solid #b7e4c7;
+      border-radius: 50%;
+      box-shadow: 0 5px 20px rgba(100,150,100,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: bold; color: #2d6a4f;
+      cursor: pointer; z-index: 100;
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none; user-select: none;
+    }
+    .nav-btn.left { left: 28px; }
+    .nav-btn.right{ right: 28px; background: #d8f3dc;}
+    .nav-btn:hover{ background:#c7f9cc;transform:scale(1.08);}
+  </style>
+</head>
+<body style="opacity:0">
+  <h1 class="month-title"></h1>
+
+  <div class="kiss-photo"></div>
+
+  <!-- Цветочки обведённые в жёлтые кружочки (обновлены) -->
+  <div class="floating-flower f1"  data-photo="images/CUP4.png">🌹</div>
+  <div class="floating-flower f2"  data-photo="images/fun2.jpg">💐</div>
+  <div class="floating-flower f3"  data-photo="images/fun3.jpg">🌸</div>
+  <div class="floating-flower f4"  data-photo="images/fun4.jpg">🌺</div>
+  <div class="floating-flower f5"  data-photo="images/fun5.jpg">🌹</div>
+  <div class="floating-flower f6"  data-photo="images/fun6.jpg">💐</div>
+  <div class="floating-flower f7"  data-photo="images/fun7.jpg">🌸</div>
+  <div class="floating-flower f8"  data-photo="images/fun8.jpg">🌺</div>
+  <div class="floating-flower f9"  data-photo="images/fun9.jpg">🌹</div>
+  <div class="floating-flower f10" data-photo="images/fun10.jpg">💐</div>
+
+  <div class="popup-photo" id="popupPhoto"></div>
+
+  <div class="spring-section">
+    <div class="spring-card" id="springCard">
+      <div class="flowers">
+        <span class="flower">🌹</span>
+        <span class="flower">💐</span>
+        <span class="flower">🌸</span>
+      </div>
+      <h2>Март уже здесь — готовься к праздникам!</h2>
+      <div class="birthday-highlight">8 марта & 21 марта 🎂✨</div>
+      <p>
+        Март — месяц, когда природа просыпается, а вместе с ней — и лучшие праздники года!<br><br>
+        Уже совсем скоро <strong>8 марта</strong> — день, посвящённый красоте, нежности и силе женщин.<br>
+        А сразу за ним — самый важный день: <strong>21 марта, твой 21-й День Рождения!</strong><br><br>
+        Тебе исполняется 21 год — новая глава жизни, полная приключений, мечт и побед.<br>
+        Ты — причина весны в моём сердце круглый год. <br>
+        Готовься к подаркам, цветам и сюрпризам! 🌹💚
+      </p>
+      <span class="spring-hint">
+        P.S. Приготовь место для букетов, торта и подарка 🎁🌷<br>
+        Март — твой месяц, и я сделаю его незабываемым!<br>
+        <em>(Нажми на карточку, чтобы отправить поцелуй! 💋)</em>
+      </span>
+    </div>
+  </div>
+
+  <!-- Кнопки навигации -->
+  <button class="nav-btn left"  onclick="pageTransition('love.html')" title="Назад">&#8592;</button>
+  <button class="nav-btn right" onclick="pageTransition('wishlist.html')"    title="Wishlist">W</button>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function(){
+      setTimeout(function(){ document.body.style.opacity=1; }, 60);
+    });
+
+    function pageTransition(href) {
+      document.documentElement.classList.add('page-exit');
+      setTimeout(function () {
+        window.location.href = href;
+      }, 1000);
+    }
+
+    const card       = document.getElementById('springCard');
+    const kissPhoto  = document.querySelector('.kiss-photo');
+    const popupPhoto = document.getElementById('popupPhoto');
+    const flowers    = document.querySelectorAll('.floating-flower');
+
+    // Нажатие на карточку = поцелуй
+    card.addEventListener('click', function() {
+      card.classList.add('kissing');
+      kissPhoto.classList.add('active');
+      setTimeout(() => {
+        card.classList.remove('kissing');
+        kissPhoto.classList.remove('active');
+      }, 1500);
+    });
+
+    // Нажатие на цветочки в жёлтых кружочках = показ картинки
+    flowers.forEach(flower => {
+      flower.addEventListener('click', function(e) {
+        e.stopPropagation();
+
+        const photoUrl = this.getAttribute('data-photo');
+        if (!photoUrl) return;
+
+        popupPhoto.style.backgroundImage = `url('${photoUrl}')`;
+        popupPhoto.classList.add('active');
+
+        setTimeout(() => {
+          popupPhoto.classList.remove('active');
+        }, 2000);
+      });
+    });
+  </script>
+</body>
+</html>

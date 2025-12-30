@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Wish-list</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    html,body{
+      margin:0;padding:0;min-height:100vh;
+      font-family:'Montserrat',Arial,sans-serif;
+      background:url('images/april-bg.jpg') no-repeat center center fixed;
+      background-size:cover;
+      overflow:hidden;position:relative;
+      opacity:1;transition:opacity .45s cubic-bezier(.44,1.07,.69,.93);
+    }
+    body.fadeout{opacity:0;pointer-events:none;}
+    body::before{
+      content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+      background:linear-gradient(180deg,rgba(230,252,245,.5)0%,rgba(255,250,240,.55)50%,rgba(230,248,255,.45)100%);
+      z-index:0;pointer-events:none;
+    }
+    .page-wrapper{position:relative;z-index:5;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+    .month-title{
+      margin:52px 0 10px;text-align:center;
+      font-family:'Playfair Display',serif;font-weight:700;
+      font-size:2.4rem;color:#22577a;letter-spacing:2px;
+      text-shadow:0 3px 16px #fff9,0 4px 24px rgba(120,180,210,.55);
+    }
+    .month-sub{
+      text-align:center;font-size:1rem;color:#457b9d;
+      margin-bottom:32px;font-style:italic;
+    }
+    /* Центральная карточка */
+    .wishlist-card{
+      max-width:600px;width:92vw;
+      background:rgba(255,255,255,0.97);
+      border-radius:30px;
+      border:3px solid #b7f0c5;
+      padding:28px 24px 22px;
+      box-shadow:0 16px 40px rgba(88,129,87,.28);
+      backdrop-filter:blur(8px);
+      position:relative;
+      display:flex;flex-direction:column;
+    }
+    .wishlist-header{
+      text-align:center;margin-bottom:18px;
+    }
+    .wishlist-header h2{
+      font-family:'Playfair Display',serif;
+      font-size:2rem;color:#2d6a4f;margin:0 0 10px;
+      letter-spacing:1px;
+    }
+    .wishlist-header p{
+      margin:0;font-size:.98rem;color:#52796f;
+    }
+    .wish-list{
+      list-style:none;margin:16px 0 6px;padding:0;
+      max-height:44vh;overflow-y:auto;
+    }
+    .wish-item{
+      display:flex;align-items:center;
+      background:rgba(240,252,245,0.95);
+      border-radius:18px;
+      padding:9px 12px;
+      margin-bottom:8px;
+      box-shadow:0 3px 12px rgba(128,237,153,.25);
+      transition:transform .16s,box-shadow .16s,background .16s;
+    }
+    .wish-item:hover{
+      transform:translateY(-2px);
+      box-shadow:0 5px 16px rgba(128,237,153,.40);
+      background:rgba(232,252,244,0.98);
+    }
+    .wish-text{
+      flex:1;border:none;background:transparent;
+      font-size:.98rem;color:#264653;
+      outline:none;
+    }
+    .wish-text::placeholder{color:#b0c4c5;}
+    .wish-item.completed{
+      background:rgba(224,247,230,0.85);opacity:.85;
+    }
+    .wish-item.completed .wish-text{
+      text-decoration:line-through;color:#6c757d;
+    }
+    .wish-item.completed::after{
+      content:'✓';margin-left:6px;font-size:.9rem;color:#2d6a4f;
+    }
+    .bottom-row{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-top:10px;
+    }
+    .hint-text{
+      font-size:.85rem;color:#74c69d;font-style:italic;
+    }
+    .btn-add{
+      border:none;border-radius:20px;
+      padding:9px 18px;
+      font-size:.9rem;font-weight:600;
+      font-family:'Montserrat',Arial,sans-serif;
+      cursor:pointer;
+      background:linear-gradient(135deg,#52b788,#80ed99);
+      color:#fff;box-shadow:0 4px 14px rgba(82,183,136,.55);
+      transition:transform .14s,box-shadow .14s,background .14s;
+      display:flex;align-items:center;gap:6px;
+    }
+    .btn-add span{font-size:1.2rem;}
+    .btn-add:hover{
+      transform:translateY(-1px) scale(1.02);
+      box-shadow:0 6px 18px rgba(82,183,136,.7);
+      background:linear-gradient(135deg,#40916c,#80ed99);
+    }
+    /* Летающие номера желаний */
+    .wish-number{
+      position:fixed;
+      font-family:'Playfair Display',serif;
+      font-weight:700;
+      font-size:2.3rem;
+      color:#2d6a4f;
+      text-shadow:0 4px 12px rgba(0,0,0,.25);
+      opacity:0;
+      transform:scale(0.4);
+      z-index:8;
+      pointer-events:none;
+      animation:numberPop 2.4s ease-out forwards;
+    }
+    .wish-number.left{left:4%;top:18%;}
+    .wish-number.right{right:5%;bottom:18%;}
+    @keyframes numberPop{
+      0%{opacity:0;transform:translateY(10px) scale(.4);}
+      20%{opacity:1;transform:translateY(0) scale(1);}
+      60%{transform:translateY(-10px) scale(1.05);}
+      100%{opacity:.8;transform:translateY(0) scale(1);}
+    }
+
+    /* Навигация */
+    .nav-btn{
+      position:fixed;bottom:26px;width:52px;height:52px;
+      background:rgba(255,255,255,0.98);border:2px solid #80ed99;
+      border-radius:50%;box-shadow:0 5px 17px rgba(76,175,80,.23);
+      display:flex;align-items:center;justify-content:center;
+      font-size:2rem;font-weight:bold;color:#2d6a4f;
+      cursor:pointer;z-index:100;text-decoration:none;
+      transition:background .16s,transform .14s;
+    }
+    .nav-btn.left{left:26px;}
+    .nav-btn.right{right:26px;background:#d8f3dc;}
+    .nav-btn:hover{background:#c7f9cc;transform:scale(1.07);}
+
+    @media(max-width:800px){
+      .month-title{font-size:1.4rem;margin-top:40px;}
+      .wishlist-card{padding:20px 16px;}
+    }
+  </style>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    // ПЛАВНЫЙ ПЕРЕХОД МЕЖДУ СТРАНИЦАМИ
+    window.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{document.body.style.opacity=1;},50);});
+    function pageTransition(href){
+      document.body.classList.add('fadeout');
+      setTimeout(()=>{window.location.href=href;},380);
+    }
+
+    // НАСТРОЙКА SUPABASE (замени на свои значения)
+    const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
+    const SUPABASE_KEY = 'YOUR_ANON_PUBLIC_KEY';
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // user_id можешь захардкодить под неё (или использовать авторизацию)
+    const WISH_USER_ID = 'user_april_01';
+  </script>
+</head>
+<body style="opacity:0">
+  <div class="page-wrapper">
+    <h1 class="month-title">Wish-list твоих желаний 🌈</h1>
+    <p class="month-sub">Добавляй сюда всё, что хочется — я буду заглядывать и исполнять по одному пункту ✨</p>
+
+    <div class="wishlist-card">
+      <div class="wishlist-header">
+        <h2>Список желаний</h2>
+        <p>Пиши сюда подарки, поездки, впечатления, вещи, которые хочешь попробовать или получить.</p>
+      </div>
+
+      <ul class="wish-list" id="wishList"></ul>
+
+      <div class="bottom-row">
+        <span class="hint-text">Можешь добавлять сколько угодно пунктов — этот список только твой 💚</span>
+        <button class="btn-add" id="addWishBtn"><span>+</span> желание</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="nav-btn left"  onclick="pageTransition('birthday.html')" title="Назад">&#8592;</button>
+  <button class="nav-btn right" onclick="pageTransition('star.html')"   title="STAR">S</button>
+
+  <script>
+    const wishListEl = document.getElementById('wishList');
+    const addBtn     = document.getElementById('addWishBtn');
+    let wishCounter  = 0; // для номеров 1,2,3…
+
+    // Загружаем желания из Supabase
+    async function loadWishes(){
+      const { data, error } = await supabaseClient
+        .from('wishes')
+        .select('*')
+        .eq('user_id', WISH_USER_ID)
+        .order('id', { ascending: true });
+
+      if(error){
+        console.error('load error', error);
+        return;
+      }
+      wishListEl.innerHTML = '';
+      wishCounter = 0;
+      data.forEach(row => {
+        addWishRow(row.id, row.text, row.done, false); // без анимации номера при первичной загрузке
+      });
+    }
+
+    // Создание DOM-элемента желания
+    function addWishRow(id, text='', done=false, withNumber=true){
+      wishCounter++;
+      const li = document.createElement('li');
+      li.className = 'wish-item';
+      if(done) li.classList.add('completed');
+      li.dataset.id = id ?? ''; // может быть пустым до сохранения
+
+      li.innerHTML = `
+        <input type="checkbox" ${done ? 'checked' : ''}>
+        <input class="wish-text" type="text" placeholder="Ещё одно желание…" value="${text ? text.replace(/"/g,'&quot;') : ''}">
+      `;
+      wishListEl.appendChild(li);
+
+      if(withNumber){
+        spawnWishNumber(wishCounter);
+      }
+    }
+
+    // Появление пульсирующей цифры слева/справа
+    function spawnWishNumber(num){
+      const span = document.createElement('span');
+      span.className = 'wish-number ' + (num % 2 === 0 ? 'right' : 'left');
+      span.textContent = num;
+      document.body.appendChild(span);
+      // просто оставить, он сам исчезать не должен — мягкая "наклейка" номера
+      setTimeout(()=>{ span.style.opacity = '0.85'; }, 2400);
+    }
+
+    // Добавление нового желания (сразу создаём запись в Supabase)
+    addBtn.addEventListener('click', async ()=>{
+      // вставляем пустое желание в БД
+      const { data, error } = await supabaseClient
+        .from('wishes')
+        .insert({ user_id: WISH_USER_ID, text: '', done: false })
+        .select()
+        .single();
+
+      if(error){
+        console.error('insert error', error);
+        return;
+      }
+      addWishRow(data.id, '', false, true);
+    });
+
+    // Обработка изменений текста и флага done
+    wishListEl.addEventListener('input', async (e)=>{
+      if(!e.target.classList.contains('wish-text')) return;
+      const li   = e.target.closest('.wish-item');
+      const id   = li.dataset.id;
+      const text = e.target.value;
+
+      if(!id){ return; } // на всякий случай
+
+      const { error } = await supabaseClient
+        .from('wishes')
+        .update({ text })
+        .eq('id', id);
+
+      if(error) console.error('update text error', error);
+    });
+
+    wishListEl.addEventListener('change', async (e)=>{
+      if(e.target.type !== 'checkbox') return;
+      const li   = e.target.closest('.wish-item');
+      const id   = li.dataset.id;
+      const done = e.target.checked;
+
+      li.classList.toggle('completed', done);
+
+      if(!id){ return; }
+
+      const { error } = await supabaseClient
+        .from('wishes')
+        .update({ done })
+        .eq('id', id);
+
+      if(error) console.error('update done error', error);
+    });
+
+    // Стартовая загрузка
+    loadWishes();
+  </script>
+</body>
+</html>

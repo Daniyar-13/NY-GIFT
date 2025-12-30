@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Февраль: День Святого Валентина ❤️</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================
+           МЯГКИЕ ПЕРЕХОДЫ МЕЖДУ СТРАНИЦАМИ
+           ======================================== */
+
+        @keyframes pageEnter {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pageExit {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes slideInTop {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes slideInBottom {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        html.page-exit body {
+            animation: pageExit 1s ease-in-out forwards;
+        }
+
+        html.page-exit::before,
+        html.page-exit::after {
+            content: '';
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 50vh;
+            background: #000;
+            z-index: 9999;
+            animation: 1s ease-in-out forwards;
+        }
+
+        html.page-exit::before {
+            top: 0;
+            animation-name: slideInTop;
+        }
+
+        html.page-exit::after {
+            bottom: 0;
+            animation-name: slideInBottom;
+        }
+
+        body {
+            animation: pageEnter 1.2s ease-out;
+        }
+
+        /* ========================================
+           CSS ПЕРЕМЕННЫЕ
+           ======================================== */
+
+        :root {
+            --color-primary: #8B4F5C;
+            --color-secondary: #D4A5A5;
+            --color-accent: #C49B73;
+            --color-background: #F5F1ED;
+            --color-text: #2C2C2C;
+            --color-text-light: #4A4A4A;
+
+            --color-heading-bright: #FFFFFF;
+            --color-subheading-bright: #FFE5B4;
+
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --font-script: 'Great Vibes', cursive;
+
+            --font-size-h1: 3.5rem;
+            --font-size-h2: 2.5rem;
+            --font-size-h3: 1.75rem;
+            --font-size-body: 1.125rem;
+            --font-size-small: 0.875rem;
+
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --spacing-xxl: 4rem;
+
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.15);
+            --blur-backdrop: blur(12px);
+
+            /* 💕 ВАЛЕНТИНКА - ЦВЕТА */
+            --valentine-color: #a4244f;     /* Темно-красный */
+            --valentine-light: #d4486c;     /* Светло-красный */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-size: var(--font-size-body);
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--color-text);
+            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #ffd0e0 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           ОСНОВНОЙ КОНТЕЙНЕР
+           ======================================== */
+
+        .main-container {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xl) var(--spacing-lg);
+        }
+
+        /* ========================================
+           ЗАГОЛОВОК - ЦВЕТ ВАЛЕНТИНКИ
+           ======================================== */
+
+        .month-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xxl);
+            animation: fadeInDown 1s ease-out;
+            position: relative;
+            z-index: 100;
+        }
+
+        .month-title {
+            font-family: var(--font-heading);
+            font-size: var(--font-size-h1);
+            font-weight: 700;
+            color: var(--valentine-color);
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.1),
+                0 0 20px rgba(164, 36, 79, 0.3);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* ========================================
+           АНИМАЦИЯ ПЕРЕВОРОТА КАРТОЧКИ
+           ======================================== */
+
+        .card-container {
+            perspective: 1500px;
+            width: 100%;
+            max-width: 600px;
+            margin: var(--spacing-xxl) auto;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .card-flipper {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card-flipper.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Передняя сторона - Картинка валентинки */
+        .card-front {
+            background: white;
+            border: 4px solid var(--valentine-color);
+        }
+
+        .valentine-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: var(--spacing-lg);
+        }
+
+        /* Задняя сторона - Письмо */
+        .card-back {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            transform: rotateY(180deg);
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            overflow-x: hidden;
+            border: 4px solid var(--valentine-color);
+        }
+
+        /* Стилизация скроллбара */
+        .card-back::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .card-back::-webkit-scrollbar-track {
+            background: rgba(164, 36, 79, 0.1);
+            border-radius: 10px;
+        }
+
+        .card-back::-webkit-scrollbar-thumb {
+            background: rgba(164, 36, 79, 0.5);
+            border-radius: 10px;
+        }
+
+        .card-back::-webkit-scrollbar-thumb:hover {
+            background: rgba(164, 36, 79, 0.8);
+        }
+
+        .letter-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100%;
+        }
+
+        .hearts-decoration {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+            font-size: 1.5rem;
+        }
+
+        .letter-title {
+            font-family: var(--font-script);
+            font-size: 2rem;
+            color: var(--valentine-color);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.4;
+        }
+
+        .letter-text {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--valentine-color);
+            margin-bottom: var(--spacing-md);
+            padding: 0 var(--spacing-sm);
+        }
+
+        .letter-ps {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-style: italic;
+            color: rgba(164, 36, 79, 0.7);
+            margin-top: var(--spacing-md);
+            padding: 0 var(--spacing-sm);
+            line-height: 1.5;
+        }
+
+        /* Подсказка для клика */
+        .click-hint {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+            font-size: 0.9rem;
+            color: rgba(164, 36, 79, 0.8);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* ========================================
+           КНОПКИ НАВИГАЦИИ (КАК НА КАЛЕНДАРЕ)
+           ======================================== */
+
+       /* НИЖНИЕ КРУГЛЫЕ КНОПКИ – ПРОЗРАЧНЫЕ НА КРАЯХ ЭКРАНА */
+        .floating-nav {
+            position: fixed;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            padding: 0 22px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .floating-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.75);
+            background: rgba(248,252,255,0.28); /* сильно прозрачные */
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f8f9fa;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+            backdrop-filter: blur(10px);
+            pointer-events: auto;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 7px 22px rgba(0,0,0,0.38);
+            background: rgba(248,252,255,0.45);
+        }
+
+        .floating-btn .icon-calendar {
+            font-size: 1.5rem;
+        }
+    
+        /* Стрелка назад */
+        .back-arrow {
+            position: fixed;
+            top: var(--spacing-lg);
+            left: var(--spacing-lg);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--valentine-color);
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            z-index: 100;
+            text-decoration: none;
+        }
+
+        .back-arrow:hover {
+            transform: scale(1.1) translateX(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ========================================
+           ДЕКОРАТИВНЫЕ АМУРЫ (как на скрине)
+           ======================================== */
+
+        .cupid {
+    position: fixed;
+    width: 190px;
+    height: 190px;
+    z-index: 1;
+    
+    opacity: 1;              
+    pointer-events: none;
+    
+    object-fit: contain;     
+    object-position: center; 
+    
+    filter: brightness(1.05) contrast(1.1); 
+}
+
+        .cupid-1 {
+            top: 15%;
+            left: 5%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .cupid-2 {
+            top: 15%;
+            right: 5%;
+            animation: float 7s ease-in-out infinite 1s;
+        }
+
+        .cupid-3 {
+            bottom: 15%;
+            left: 5%;
+            animation: float 8s ease-in-out infinite 2s;
+        }
+
+        .cupid-4 {
+            bottom: 15%;
+            right: 5%;
+            animation: float 9s ease-in-out infinite 3s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(-5deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        /* ========================================
+           АНИМАЦИИ
+           ======================================== */
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           АДАПТИВНОСТЬ
+           ======================================== */
+
+        @media (max-width: 768px) {
+            :root {
+                --font-size-h1: 2rem;
+            }
+
+            .card-flipper {
+                height: 420px;
+            }
+
+            .card-back {
+                padding: var(--spacing-md);
+            }
+
+            .letter-title {
+                font-size: 1.5rem;
+            }
+
+            .letter-text {
+                font-size: 0.9rem;
+            }
+
+            .cupid {
+                width: 100px;
+                height: 100px;
+            }
+
+            .month-navigation {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Стрелка назад -->
+        <a href="letter.html" class="back-arrow" onclick="handlePageTransition(event)">
+            ←
+        </a>
+
+        <!-- Декоративные амуры (как на скрине) -->
+        <img src="images/CUP1.png" alt="Cupid" class="cupid cupid-1">
+        <img src="images/CUP3.png" alt="Cupid" class="cupid cupid-2">
+        <img src="images/CUP2.png" alt="Cupid" class="cupid cupid-3">
+        <img src="images/CUP4.png" alt="Cupid" class="cupid cupid-4">
+
+        <!-- Заголовок -->
+        <div class="month-header">
+            <h1 class="month-title">Февраль: День Святого Валентина ❤️</h1>
+        </div>
+
+        <!-- Карточка с анимацией переворота -->
+        <div class="card-container">
+            <div class="card-flipper" id="cardFlipper">
+
+                <!-- Передняя сторона - Картинка валентинки -->
+                <div class="card-face card-front">
+                    <img src="images/feb22.png" alt="Valentine Card" class="valentine-image">
+                </div>
+
+                <!-- Задняя сторона - Письмо -->
+                <div class="card-face card-back">
+                    <div class="letter-content">
+                        <div class="hearts-decoration">
+                            ❤️ 💕 💖
+                        </div>
+
+                        <h2 class="letter-title">Скоро праздник чувств!</h2>
+
+                        <p class="letter-text">
+                            В этом феврале — особенный день, когда сердца говорят громче слов…
+                        </p>
+
+                        <p class="letter-text">
+                            Пусть тебя окружает любовь, вдохновение и сладкое предвкушение — скоро кое-что для тебя приготовлено!
+                        </p>
+
+                        <p class="letter-text">
+                            Ожидай сюрприз с купидоном и валентинкой 💌
+                        </p>
+
+                        <p class="letter-ps">
+                            P.S. Сердца и стрелы уже летят к тебе! Готовься к подарку и отмечай на календаре 14 февраля
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Подсказка -->
+            <div class="click-hint">
+                👆 Нажми, чтобы перевернуть
+            </div>
+        </div>
+
+         <!-- НОВЫЕ ПОЛУПРОЗРАЧНЫЕ КНОПКИ -->
+        <div class="floating-nav">
+          <a href="MAP.html" class="floating-btn" onclick="handlePageTransition(event)" title="MAP">
+            <span class="icon-map">🗺️</span>
+          </a>
+          <a href="birthday.html" class="floating-btn" onclick="handlePageTransition(event)" title="February">
+            M
+          </a>
+        </div>
+    </div>
+
+    </div>
+
+    <script>
+        // ========================================
+        // ПЕРЕВОРОТ КАРТОЧКИ
+        // ========================================
+
+        const cardFlipper = document.getElementById('cardFlipper');
+
+        cardFlipper.addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+
+        // ========================================
+        // МЯГКИЕ ПЕРЕХОДЫ МЕЖДУ СТРАНИЦАМИ
+        // ========================================
+
+        function handlePageTransition(event) {
+            event.preventDefault();
+            const href = event.target.href;
+
+            document.documentElement.classList.add('page-exit');
+
+            setTimeout(() => {
+                window.location.href = href;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>MAP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Шрифты (по желанию) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== ПЕРЕХОД С ЧЁРНЫМИ ПОЛОСАМИ ===== */
+    @keyframes pageExit {
+      0%   { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes slideInTop {
+      from { transform: translateY(-100%); }
+      to   { transform: translateY(0); }
+    }
+    @keyframes slideInBottom {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    html.page-exit body {
+      animation: pageExit 1s ease-in-out forwards;
+    }
+    html.page-exit::before,
+    html.page-exit::after {
+      content:'';
+      position:fixed;
+      left:0;
+      width:100%;
+      height:50vh;
+      background:#000;
+      z-index:9999;
+      animation:1s ease-in-out forwards;
+      pointer-events:none;
+    }
+    html.page-exit::before {
+      top:0;
+      animation-name:slideInTop;
+    }
+    html.page-exit::after {
+      bottom:0;
+      animation-name:slideInBottom;
+    }
+
+    /* ===== БАЗОВЫЙ ФОН И КАРТА ===== */
+    html, body{
+      margin:0;
+      padding:0;
+      height:100%;
+    }
+    body{
+      background:#14054C;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family:'Montserrat', Arial, sans-serif;
+      overflow:hidden;
+      position:relative;
+    }
+/* Боковые панели, независимые от карты */
+.side-panel {
+  position: fixed;
+  top: 80px;                 /* отступ сверху, под гирляндой */
+  bottom: 80px;              /* отступ снизу */
+  width: 260px;
+  background: rgba(10,3,45,0.9);
+  border-radius: 20px;
+  box-shadow: 0 0 18px rgba(0,0,0,0.5);
+  padding: 18px 16px;
+  color: #f7f3ff;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  box-sizing: border-box;
+  z-index: 15;               /* выше карты, ниже гирлянд */
+}
+
+.side-panel-left  { left: 24px; }
+.side-panel-right { right: 24px; }
+
+/* На очень узких экранах панели убираем или перестраиваем */
+@media (max-width: 1200px) {
+  .side-panel {
+    display: none;
+  }
+}
+
+/* Заголовок в панели */
+.side-panel h2{
+  margin:0 0 12px;
+  font-size:1.1rem;
+  font-weight:600;
+  color:#ffd76a;
+}
+
+.side-panel-left h2{
+  line-height: 2.5;   /* можно 2.0, если хочешь ещё больше воздуха */
+}
+
+.side-panel-right h2{
+  line-height: 2.3;   /* можно 2.0, если хочешь ещё больше воздуха */
+}
+.side-panel{
+  /* всё, что уже есть, оставь */
+  text-align: center;              /* центр по горизонтали */
+  display: flex;                   /* центр по вертикали */
+  flex-direction: column;
+  justify-content: center;         /* по вертикали */
+  align-items: center;             /* заголовки и абзацы по центру */
+}
+
+/* Чтобы карта не прижималась на мобильных */
+@media (max-width:1100px){
+  .page-layout{
+    flex-direction:column;
+    gap:20px;
+    padding:20px 12px 32px;
+  }
+  .side-panel{
+    width:90%;
+    max-width:420px;
+  }
+}
+    .map-wrapper{
+      position:relative;
+      width:1280px;
+      height:832px;
+      background-color:#14054C;
+      background-image:url('images/map.png'); /* ТВОЯ КАРТИНКА */
+      background-repeat:no-repeat;
+      background-position:center center;
+      background-size:1280px 832px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.25);
+      border-radius:8px;
+      overflow:hidden;
+    }
+
+    /* ===== ГИРЛЯНДЫ ПО КРАЯМ ЭКРАНА ===== */
+    .garland-edge{
+      position:fixed;
+      left:0;
+      right:0;
+      pointer-events:none;
+      z-index:20;
+    }
+    .garland-top{
+      top:0;
+      height:80px;
+    }
+    .garland-bottom{
+      bottom:0;
+      height:80px;
+      transform:rotate(180deg);
+    }
+    .garland-vert{
+      top:0;
+      bottom:0;
+      width:80px;
+    }
+
+
+    .garland-line{
+      position:absolute;
+      top:20px;
+      left:0;
+      width:100%;
+      height:2px;
+      background:linear-gradient(90deg,#ffe066,#ff6b6b,#74c0fc,#b197fc,#ff922b);
+      opacity:0.7;
+    }
+    .garland-bulbs{
+      position:absolute;
+      top:22px;
+      left:0;
+      width:100%;
+      display:flex;
+      justify-content:space-around;
+    }
+    .garland-bulb{
+      width:20px;
+      height:20px;
+      border-radius:50%;
+      background:#ff6b6b;
+      box-shadow:0 0 10px rgba(255,107,107,0.9);
+      animation:bulbBlink 1.6s ease-in-out infinite alternate;
+    }
+    .garland-bulb:nth-child(2){ background:#ffe066; box-shadow:0 0 10px rgba(255,224,102,0.9); animation-delay:.3s;}
+    .garland-bulb:nth-child(3){ background:#69db7c; box-shadow:0 0 10px rgba(105,219,124,0.9); animation-delay:.6s;}
+    .garland-bulb:nth-child(4){ background:#74c0fc; box-shadow:0 0 10px rgba(116,192,252,0.9); animation-delay:.9s;}
+    .garland-bulb:nth-child(5){ background:#f783ac; box-shadow:0 0 10px rgba(247,131,172,0.9); animation-delay:1.2s;}
+
+    @keyframes bulbBlink{
+      0%  { transform:translateY(0); opacity:.4; }
+      100%{ transform:translateY(5px); opacity:1; }
+    }
+
+    /* ===== ПАДАЮЩИЙ СНЕГ ===== */
+    .snow-layer{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:10;
+    }
+    .snowflake{
+      position:absolute;
+      top:-10%;
+      color:rgba(255,255,255,0.9);
+      font-size:12px;
+      animation:snowFall linear infinite;
+    }
+    @keyframes snowFall{
+      0%   { transform:translateY(-10vh); opacity:1; }
+      100% { transform:translateY(110vh); opacity:0.2; }
+    }
+
+    /* ===== КЛИКАБЕЛЬНЫЕ ЗОНЫ НА СТИКЕРАХ ===== */
+    .hotspot{
+      position:absolute;
+      cursor:pointer;
+      background:rgba(255,255,255,0.00); /* почти невидимо, можно сделать transparent */
+    }
+
+    /* КООРДИНАТЫ ПРИБЛИЗИТЕЛЬНЫЕ — ПОДГОНЯЙ ПОД СВОЮ КАРТУ */
+    .hs-letter   { top:70px;  left:410px; width:110px; height:80px; }   /* конверт */
+    .hs-photos   { top:80px; right:350px;width:110px; height:130px;}  /* фотки */
+    .hs-cake     { top:320px; left:440px; width:130px; height:90px; }  /* торт */
+    .hs-heart    { top:300px; right:290px;width:120px; height:110px;}  /* сердце */
+    .hs-scroll   { bottom:235px; left:30px;width:210px; height:110px;} /* свиток */
+    .hs-star     { bottom:80px; left:440px;width:120px; height:150px;}/* звезда */
+    .hs-book     { bottom:120px; right:230px;width:180px; height:150px;}/* книга */
+
+    .video-overlay{
+  position:fixed;
+  inset:0;
+  background:#1E1E1E;
+  display:none;              /* включаем из JS */
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+}
+
+.video-overlay video{
+  max-width:100vw;
+  max-height:100vh;
+  object-fit:contain; /* не растягивает сверх исходного */
+}
+  </style>
+</head>
+<body>
+
+  <!-- Оверлей с видео для перехода к письму -->
+<div class="video-overlay" id="letterVideoOverlay">
+  <video id="letterVideo">
+    <!-- сюда подставишь свой файл -->
+    <source src="images/letter-intro.mp4" type="video/mp4">
+  </video>
+</div>
+
+  <!-- Гирлянды по краям окна -->
+  <div class="garland-edge garland-top">
+    <div class="garland-line"></div>
+    <div class="garland-bulbs">
+      <div class="garland-bulb"></div>
+      <div class="garland-bulb"></div>
+      <div class="garland-bulb"></div>
+      <div class="garland-bulb"></div>
+      <div class="garland-bulb"></div>
+    </div>
+  </div>
+
+  <div class="garland-edge garland-bottom">
+    <div class="garland-line"></div>
+    <div class="garland-bulbs">
+      <div class="garland-bulb"></div>
+      <div class="garland-bulb"></div>
+      <div class="garland-bulb"></div>
+      <div class="garland-bulb"></div>
+      <div class="garland-bulb"></div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Снег -->
+  <div class="snow-layer" id="snowLayer"></div>
+
+<div class="side-panel side-panel-left">
+  <h2>
+    Ми уокап<br>
+    Ну усе уже<br>
+    Киттен хард<br>
+    Кьюти патути<br>
+    Уэр<br>
+    Уди<br>
+    МммМмМммМм<br>
+    Омагад<br>
+    Ми толд ю вообще толд<br>
+    Йегх<br>
+    Снифейбл<br>
+    Скуэшбл<br>
+    Ми гонна хрхр<br>
+    Губай
+  </h2>
+</div>
+
+<div class="side-panel side-panel-right">
+  <h2>
+    Это мини‑карта специально для тебя.<br>
+    Каждая остановка на ней — кусочек нашей истории:<br>
+    что‑то из прошлого и что‑то для будущего.<br>
+    Надеюсь, тебе понравится это маленькое дополнение к моему подарку.
+  </h2>
+</div>
+  <!-- Карта со стикерами -->
+  <div class="map-wrapper">
+    <a class="hotspot hs-letter" href="letter.html"></a>
+    <a class="hotspot hs-photos" href="photo.html"></a>
+    <a class="hotspot hs-cake"   href="birthday.html"></a>
+    <a class="hotspot hs-heart"  href="love.html"></a>
+    <a class="hotspot hs-scroll" href="wishlist.html"></a>
+    <a class="hotspot hs-star"   href="may.html"></a>
+    <a class="hotspot hs-book"   href="book.html"></a>
+  </div>
+
+<script>
+  // Снег
+  const snowLayer = document.getElementById('snowLayer');
+  const FLAKES = 40;
+  for (let i = 0; i < FLAKES; i++) {
+    const s = document.createElement('span');
+    s.className = 'snowflake';
+    s.textContent = '❆';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.fontSize = (8 + Math.random()*10) + 'px';
+    s.style.animationDuration = (8 + Math.random()*7) + 's';
+    s.style.animationDelay = (Math.random()*8) + 's';
+    snowLayer.appendChild(s);
+  }
+
+  // Переход с полосами
+  function mapTransition(url){
+    document.documentElement.classList.add('page-exit');
+    setTimeout(()=>{ window.location.href = url; }, 1000);
+  }
+
+  const hotspots = document.querySelectorAll('.hotspot');
+
+  // Видео для письма
+  const letterOverlay = document.getElementById('letterVideoOverlay');
+  const letterVideo   = document.getElementById('letterVideo');
+
+  hotspots.forEach(el=>{
+    const href = el.getAttribute('href');
+
+    el.addEventListener('click', e=>{
+      e.preventDefault();
+
+      // Если клик по конверту (hs-letter) — сначала видео
+      if (el.classList.contains('hs-letter')) {
+        letterOverlay.style.display = 'flex';
+        letterVideo.currentTime = 0;
+        letterVideo.play();
+
+ // когда видео закончится — сразу полосы и переход
+letterVideo.onended = () => {
+  // НЕ скрываем оверлей, пока не ушли со страницы
+  mapTransition(href);   // добавляет класс page-exit и через 1s редирект
+};
+      } else {
+        // остальные ярлыки работают как раньше
+        mapTransition(href);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
