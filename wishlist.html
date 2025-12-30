@@ -9,8 +9,7 @@
     html,body{
       margin:0;padding:0;min-height:100vh;
       font-family:'Montserrat',Arial,sans-serif;
-      background:url('images/march.jpg') no-repeat center center fixed;
-      border: 1px solid transparent;
+      background:url('images/march.png') no-repeat center center fixed;
       background-size:cover;
       overflow:hidden;position:relative;
       opacity:1;transition:opacity .45s cubic-bezier(.44,1.07,.69,.93);
@@ -153,24 +152,94 @@
       .month-title{font-size:1.4rem;margin-top:40px;}
       .wishlist-card{padding:20px 16px;}
     }
+
+    /* ===== МОДАЛКА ===== */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.35);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      padding:16px;
+      z-index:200;
+    }
+    .modal{
+      width:100%;
+      max-width:420px;
+      background:#ffffff;
+      border-radius:16px;
+      padding:18px 16px 16px;
+      box-shadow:0 12px 28px rgba(0,0,0,.25);
+    }
+    .modal h2{
+      margin:0 0 10px;
+      font-size:1.1rem;
+    }
+    .field{
+      margin-bottom:10px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:.85rem;
+    }
+    textarea{
+      resize:vertical;
+      min-height:70px;
+      padding:8px;
+      border-radius:10px;
+      border:1px solid #cfd8dc;
+      font-family:inherit;
+      font-size:.95rem;
+    }
+    input[type="file"]{
+      font-size:.85rem;
+    }
+    .modal-actions{
+      margin-top:12px;
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+    }
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:7px 14px;
+      font-size:.9rem;
+      cursor:pointer;
+    }
+    .btn-secondary{
+      background:#eceff1;
+      color:#37474f;
+    }
+    .btn-primary{
+      background:#47c98a;
+      color:#fff;
+    }
   </style>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
-    // ПЛАВНЫЙ ПЕРЕХОД МЕЖДУ СТРАНИЦАМИ
+    // ПЛАВНЫЙ ПЕРЕХОД
     window.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{document.body.style.opacity=1;},50);});
     function pageTransition(href){
       document.body.classList.add('fadeout');
       setTimeout(()=>{window.location.href=href;},380);
     }
 
-    // НАСТРОЙКА SUPABASE (замени на свои значения)
-    const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
-    const SUPABASE_KEY = 'YOUR_ANON_PUBLIC_KEY';
-
+    // НАСТРОЙКА SUPABASE
+    const SUPABASE_URL = 'https://grdqiirmkldrgswpilqf.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZHFpaXJta2xkcmdzd3BpbHFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMjIxNjMsImV4cCI6MjA3ODc5ODE2M30.yTl2hdqvEBIvV6txQ7nYjw_mJj15KtQADImnWXndZpA';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  function getOrCreateRandomUserId() {
+  let id = localStorage.getItem('user_id');
+  if (!id) {
+    id = Math.floor(Math.random() * 1000) + 1; // 1..1000, не 0
+    localStorage.setItem('user_id', String(id));
+  }
+  return Number(id);
+}
 
-    // user_id можешь захардкодить под неё (или использовать авторизацию)
-    const WISH_USER_ID = 'user_april_01';
+const WISH_USER_ID = getOrCreateRandomUserId();
   </script>
 </head>
 <body style="opacity:0">
@@ -196,114 +265,118 @@
   <button class="nav-btn left"  onclick="pageTransition('birthday.html')" title="Назад">&#8592;</button>
   <button class="nav-btn right" onclick="pageTransition('star.html')"   title="STAR">S</button>
 
+  <!-- МОДАЛКА -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <h2>Новое желание</h2>
+      <div class="field">
+        <label for="wishTextModal">Описание</label>
+        <textarea id="wishTextModal" placeholder="Напиши, чего хочется…"></textarea>
+      </div>
+      <div class="field">
+        <label for="wishImage">Картинка (по желанию)</label>
+        <input type="file" id="wishImage" accept="image/*">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelBtn">Отмена</button>
+        <button class="btn btn-primary" id="saveBtn">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const wishListEl = document.getElementById('wishList');
     const addBtn     = document.getElementById('addWishBtn');
-    let wishCounter  = 0; // для номеров 1,2,3…
+    let   wishCounter = 0;
 
-    // Загружаем желания из Supabase
-    async function loadWishes(){
-      const { data, error } = await supabaseClient
-        .from('wishes')
-        .select('*')
-        .eq('user_id', WISH_USER_ID)
-        .order('id', { ascending: true });
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const wishTextModal = document.getElementById('wishTextModal');
+    const wishImageEl   = document.getElementById('wishImage');
+    const cancelBtn     = document.getElementById('cancelBtn');
+    const saveBtn       = document.getElementById('saveBtn');
 
-      if(error){
-        console.error('load error', error);
-        return;
-      }
-      wishListEl.innerHTML = '';
-      wishCounter = 0;
-      data.forEach(row => {
-        addWishRow(row.id, row.text, row.done, false); // без анимации номера при первичной загрузке
-      });
+    function openModal(){
+      modalBackdrop.style.display = 'flex';
+    }
+    function closeModal(){
+      modalBackdrop.style.display = 'none';
+      wishTextModal.value = '';
+      wishImageEl.value = '';
     }
 
-    // Создание DOM-элемента желания
+    addBtn.addEventListener('click', openModal);
+    cancelBtn.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click',(e)=>{
+      if(e.target === modalBackdrop) closeModal();
+    });
+
+ 
+
     function addWishRow(id, text='', done=false, withNumber=true){
       wishCounter++;
       const li = document.createElement('li');
       li.className = 'wish-item';
       if(done) li.classList.add('completed');
-      li.dataset.id = id ?? ''; // может быть пустым до сохранения
+      li.dataset.id = id ?? '';
+}
 
-      li.innerHTML = `
-        <input type="checkbox" ${done ? 'checked' : ''}>
-        <input class="wish-text" type="text" placeholder="Ещё одно желание…" value="${text ? text.replace(/"/g,'&quot;') : ''}">
-      `;
-      wishListEl.appendChild(li);
+    // Сохранение нового желания (текст + картинка)
+    async function saveWish(){
+      const text = wishTextModal.value.trim();
+      const file = wishImageEl.files[0];
 
-      if(withNumber){
-        spawnWishNumber(wishCounter);
+      if(!text && !file){
+        alert('Добавь хотя бы текст или картинку :)');
+        return;
       }
-    }
 
-    // Появление пульсирующей цифры слева/справа
-    function spawnWishNumber(num){
-      const span = document.createElement('span');
-      span.className = 'wish-number ' + (num % 2 === 0 ? 'right' : 'left');
-      span.textContent = num;
-      document.body.appendChild(span);
-      // просто оставить, он сам исчезать не должен — мягкая "наклейка" номера
-      setTimeout(()=>{ span.style.opacity = '0.85'; }, 2400);
-    }
+      let imageUrl = null;
 
-    // Добавление нового желания (сразу создаём запись в Supabase)
-    addBtn.addEventListener('click', async ()=>{
-      // вставляем пустое желание в БД
-      const { data, error } = await supabaseClient
-        .from('wishes')
-        .insert({ user_id: WISH_USER_ID, text: '', done: false })
+      if(file){
+        const fileName = `${Date.now()}-${file.name}`;
+        const { data: uploadData, error: uploadError } = await supabaseClient
+          .storage
+          .from('wishlist')        // bucket "wishlist"
+          .upload(fileName, file);
+
+        if(uploadError){
+          console.error(uploadError);
+          alert('Ошибка загрузки картинки');
+          return;
+        }
+
+        const { data: publicUrlData } = supabaseClient
+          .storage
+          .from('wishlist')
+          .getPublicUrl(uploadData.path);
+
+        imageUrl = publicUrlData.publicUrl;
+      }
+
+      const { data, error: insertError } = await supabaseClient
+        .from('wishlist')
+        .insert({
+          user_id: WISH_USER_ID,
+          text: text,
+          done: false,
+          image_url: imageUrl
+        })
         .select()
         .single();
 
-      if(error){
-        console.error('insert error', error);
-        return;
-      }
-      addWishRow(data.id, '', false, true);
-    });
+     if (insertError) {
+  console.log(insertError);      // уже есть
+  alert(insertError.message);    // ← добавь
+  return;
+}
 
-    // Обработка изменений текста и флага done
-    wishListEl.addEventListener('input', async (e)=>{
-      if(!e.target.classList.contains('wish-text')) return;
-      const li   = e.target.closest('.wish-item');
-      const id   = li.dataset.id;
-      const text = e.target.value;
+      addWishRow(data.id, data.text, data.done, true);
+      closeModal();
+    }
 
-      if(!id){ return; } // на всякий случай
+    saveBtn.addEventListener('click', saveWish);
 
-      const { error } = await supabaseClient
-        .from('wishes')
-        .update({ text })
-        .eq('id', id);
-
-      if(error) console.error('update text error', error);
-    });
-
-    wishListEl.addEventListener('change', async (e)=>{
-      if(e.target.type !== 'checkbox') return;
-      const li   = e.target.closest('.wish-item');
-      const id   = li.dataset.id;
-      const done = e.target.checked;
-
-      li.classList.toggle('completed', done);
-
-      if(!id){ return; }
-
-      const { error } = await supabaseClient
-        .from('wishes')
-        .update({ done })
-        .eq('id', id);
-
-      if(error) console.error('update done error', error);
-    });
-
-    // Стартовая загрузка
-    loadWishes();
+    
   </script>
 </body>
 </html>
-
-
