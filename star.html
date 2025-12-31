@@ -78,11 +78,7 @@
       font-size: 2.1rem;
       font-weight: 700;
       letter-spacing: 0.03em;
-      color: #ef4444; /* красные цифры */
-    }
-
-    #timer small {
-      display: none; /* полностью убрали текст про дату */
+      color: #ef4444;
     }
 
     .message {
@@ -98,6 +94,39 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       user-select: none;
+    }
+
+    /* Круглая кнопка карты внизу */
+    .map-btn {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: radial-gradient(circle at 30% 0%, #fefce8 0%, #e5e7eb 45%, #9ca3af 100%);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111827;
+      cursor: pointer;
+      text-decoration: none;
+      z-index: 2;
+      transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, background 0.16s ease-out;
+      font-size: 1.6rem;
+    }
+
+    .map-btn:hover {
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.75);
+      background: radial-gradient(circle at 30% 0%, #fef9c3 0%, #e5e7eb 45%, #a1a1aa 100%);
+    }
+
+    .map-btn:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.7);
     }
 
     @media (max-width: 480px) {
@@ -122,7 +151,7 @@
         <div class="flip-face back">
           <div class="message">
             You gonna see this page soon kitten 😝
-            Sooner than previous one
+            Sooner than next one
           </div>
         </div>
       </div>
@@ -130,9 +159,14 @@
     <div class="hint-outside">tap here</div>
   </div>
 
+  <!-- Кнопка перехода на карту -->
+  <a href="MAP.html" class="map-btn" title="Open map">
+    🗺
+  </a>
+
   <script>
-    // ТАЙМЕР В ФОРМАТЕ 311:45:54:12
-    const targetDate = new Date('2026-06-01T00:00:00');
+    // ТАЙМЕР В ФОРМАТЕ ДДД:ЧЧ:ММ:СС
+    const targetDate = new Date('2026-12-01T00:00:00');
     const timerEl = document.getElementById('timer');
 
     function pad(num, size) {
