@@ -632,18 +632,21 @@
         // МЯГКИЕ ПЕРЕХОДЫ МЕЖДУ СТРАНИЦАМИ
         // ========================================
 
-        function handlePageTransition(event) {
-            event.preventDefault();
-            const href = event.target.href;
+     function handlePageTransition(event) {
+    event.preventDefault();
+    const link = event.currentTarget;   // всегда сам <a>, а не вложенный span
+    const href = link.href;
 
-            document.documentElement.classList.add('page-exit');
+    document.documentElement.classList.add('page-exit');
 
-            setTimeout(() => {
-                window.location.href = href;
-            }, 1000);
+    setTimeout(() => {
+        window.location.href = href;
+    }, 1000);
+}
         }
     </script>
 </body>
 
 </html>
+
 
