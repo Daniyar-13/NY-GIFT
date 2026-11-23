@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С Новым 2026 Годом! - Календарь нашей любви</title>
+
+    <!-- Google Fonts (включая рукописный кириллический шрифт Marck Script) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&family=Great+Vibes&family=Marck+Script&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================
+           МЯГКИЕ ПЕРЕХОДЫ МЕЖДУ СТРАНИЦАМИ
+           ======================================== */
+        @keyframes pageEnter {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes pageExit {
+            0%   { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        @keyframes slideInTop {
+            from { transform: translateY(-100%); }
+            to   { transform: translateY(0); }
+        }
+        @keyframes slideInBottom {
+            from { transform: translateY(100%); }
+            to   { transform: translateY(0); }
+        }
+
+        html.page-exit body {
+            animation: pageExit 1s ease-in-out forwards;
+        }
+        html.page-exit::before,
+        html.page-exit::after {
+            content: '';
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 50vh;
+            background: #000;
+            z-index: 9999;
+            animation: 1s ease-in-out forwards;
+            pointer-events: none;
+        }
+        html.page-exit::before {
+            top: 0;
+            animation-name: slideInTop;
+        }
+        html.page-exit::after {
+            bottom: 0;
+            animation-name: slideInBottom;
+        }
+
+        :root {
+            --color-primary: #8B4F5C;
+            --color-secondary: #D4A5A5;
+            --color-accent: #C49B73;
+            --color-background: #F5F1ED;
+            --color-text: #2C2C2C;
+
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --font-script-lat: 'Great Vibes', cursive;
+            --font-script-cyr: 'Marck Script', cursive;
+
+            --font-size-body: 1.08rem;
+            --font-size-small: 0.875rem;
+
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --spacing-xxl: 3.5rem;
+
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.18);
+            --blur-backdrop: blur(12px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-size: var(--font-size-body);
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--color-text);
+            background-color: var(--color-background);
+            overflow-x: hidden;
+            animation: pageEnter 1.2s ease-out;
+        }
+
+        /* ========================================
+           КОНТЕЙНЕРЫ И ФОН
+           ======================================== */
+        .main-container {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: clip;
+        }
+
+        .background-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .background-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .dark-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.18) 0%,
+                rgba(0, 0, 0, 0.28) 50%,
+                rgba(0, 0, 0, 0.40) 100%
+            );
+            box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.3);
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) var(--spacing-lg);
+        }
+
+        /* ========================================
+           ПАДАЮЩИЙ СНЕГ
+           ======================================== */
+        .snowflakes {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10%;
+            color: rgba(255, 255, 255, 0.85);
+            animation: fall linear infinite;
+            user-select: none;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0.25;
+            }
+        }
+
+        /* ========================================
+           ГЛАВНЫЙ ЗАГОЛОВОК
+           ======================================== */
+        .main-heading-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .header-bg {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(120deg, rgba(245, 241, 237, 0.94) 60%, rgba(212, 165, 165, 0.9) 100%);
+            border-radius: 27px;
+            padding: 1.5rem 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 1.5px 12px rgba(139, 79, 92, 0.08);
+            border: 2px solid rgba(217, 185, 185, 0.28);
+            text-align: center;
+        }
+
+        .header-line-1 {
+            font-family: var(--font-script-lat);
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            letter-spacing: 0.01em;
+            line-height: 1.15;
+            text-shadow: 1px 2px 7px rgba(255, 255, 255, 0.55);
+        }
+
+        .header-line-2 {
+            font-family: var(--font-script-lat);
+            font-size: 2.2rem;
+            font-weight: 400;
+            color: var(--color-accent);
+            letter-spacing: 0.03em;
+            margin-bottom: 0.1rem;
+        }
+
+        .header-line-3 {
+            font-family: var(--font-script-lat);
+            font-size: 2.4rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            line-height: 1.18;
+            word-spacing: 0.12em;
+            letter-spacing: 0.01em;
+        }
+
+        /* ========================================
+           ТАЙМЕР ОБРАТНОГО ОТСЧЕТА
+           ======================================== */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xxl);
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+            min-width: 112px;
+            aspect-ratio: 1;
+            background: rgba(139, 79, 92, 0.32);
+            backdrop-filter: var(--blur-backdrop);
+            -webkit-backdrop-filter: var(--blur-backdrop);
+            border: 2px solid rgba(212, 165, 165, 0.45);
+            border-radius: 50%;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition-smooth);
+        }
+
+        .countdown-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: var(--shadow-hover);
+            background: rgba(139, 79, 92, 0.42);
+            border-color: rgba(196, 155, 115, 0.65);
+        }
+
+        .countdown-number {
+            font-family: var(--font-heading);
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.35);
+            line-height: 1;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .countdown-label {
+            font-family: var(--font-body);
+            font-size: var(--font-size-small);
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.92);
+            text-transform: lowercase;
+            letter-spacing: 0.05em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ========================================
+           СЕТКА КОНТЕНТА (2x2 ПОД 4 КАРТОЧКИ)
+           ======================================== */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .text-card {
+            padding: var(--spacing-lg);
+            background: rgba(245, 241, 237, 0.78);
+            backdrop-filter: var(--blur-backdrop);
+            -webkit-backdrop-filter: var(--blur-backdrop);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            animation: fadeInUp 0.9s ease-out both;
+            transition: var(--transition-smooth);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .text-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            background: rgba(245, 241, 237, 0.9);
+        }
+
+        .text-card-1 { animation-delay: 0.15s; }
+        .text-card-2 { animation-delay: 0.30s; }
+        .text-card-3 { animation-delay: 0.45s; }
+        .text-card-4 { animation-delay: 0.60s; }
+
+        .card-title {
+            font-size: 1.35rem;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            line-height: 1.45;
+        }
+
+        .card-title-large {
+            font-size: 1.65rem;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        .card-title-script {
+            font-family: var(--font-script-cyr);
+            font-size: 1.85rem;
+            font-weight: 400;
+            color: var(--color-primary);
+            line-height: 1.45;
+        }
+
+        .card-subtitle {
+            font-family: var(--font-script-cyr);
+            font-size: 2.3rem;
+            color: var(--color-primary);
+            margin-top: var(--spacing-xs);
+            text-align: center;
+        }
+
+        .card-text {
+            font-size: var(--font-size-body);
+            color: var(--color-text);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .card-text-cyrillic {
+            font-weight: 600;
+            color: var(--color-primary);
+            letter-spacing: 0.04em;
+            margin-top: var(--spacing-xs);
+            margin-bottom: 0;
+        }
+
+        /* ========================================
+           КНОПКА ПРИЗЫВА К ДЕЙСТВИЮ
+           ======================================== */
+        .cta-container {
+            text-align: center;
+            margin-top: var(--spacing-xl);
+            animation: fadeInUp 1.2s ease-out both;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: #FFFFFF;
+            font-family: var(--font-body);
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-decoration: none;
+            letter-spacing: 0.08em;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            box-shadow: var(--shadow-card);
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: var(--shadow-hover);
+            background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+            border-color: rgba(255, 255, 255, 0.45);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px) scale(1.01);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.55);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           АДАПТИВНОСТЬ
+           ======================================== */
+        @media (max-width: 900px) {
+            .header-bg {
+                padding: 1.1rem 2rem;
+            }
+            .header-line-1 { font-size: 2.2rem; }
+            .header-line-2 { font-size: 1.75rem; }
+            .header-line-3 { font-size: 1.95rem; }
+
+            .countdown-container {
+                gap: var(--spacing-sm);
+                flex-wrap: wrap;
+            }
+            .countdown-item {
+                min-width: 84px;
+                padding: var(--spacing-sm);
+            }
+            .countdown-number {
+                font-size: 2.1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --font-size-body: 1rem;
+            }
+            .content-wrapper {
+                padding: var(--spacing-lg) var(--spacing-sm);
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+            .text-card {
+                padding: var(--spacing-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-bg {
+                padding: 1rem 1.4rem;
+            }
+            .header-line-1 { font-size: 1.9rem; }
+            .header-line-2 { font-size: 1.5rem; }
+            .header-line-3 { font-size: 1.7rem; }
+
+            .countdown-item {
+                min-width: 72px;
+            }
+            .countdown-number {
+                font-size: 1.75rem;
+            }
+            .countdown-label {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="background-overlay">
+            <img src="images/main-background.png" alt="Winter Background" class="background-image">
+            <div class="dark-overlay"></div>
+        </div>
+
+        <div class="snowflakes" id="snowflakesContainer" aria-hidden="true"></div>
+
+        <div class="content-wrapper">
+            <header class="main-heading-header">
+                <div class="header-bg">
+                    <div class="header-line-1">Till our re-union</div>
+                    <div class="header-line-2">But</div>
+                    <div class="header-line-3">in New York</div>
+                </div>
+            </header>
+
+            <div class="countdown-container">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">00</div>
+                    <div class="countdown-label">дней</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">00</div>
+                    <div class="countdown-label">часов</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">00</div>
+                    <div class="countdown-label">минут</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">00</div>
+                    <div class="countdown-label">секунд</div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="text-card text-card-1">
+                    <h3 class="card-title">Happy New 2026 Year, my small kitten!</h3>
+                    <p class="card-text">
+                        Let this place be our cozy little world, where I'll always support you and where our love can grow stronger despite the distance.
+                    </p>
+                    <p class="card-text card-text-cyrillic">
+                        Это наш год волшебства и ожидания
+                    </p>
+                </div>
+
+                <div class="text-card text-card-2">
+                    <h3 class="card-title">
+                        Ты в Италии. Я собираюсь в Америку. Ты будешь в Казахстане, а меня не будет рядом.
+                        Между нами будут тысячи километров и целый год разлуки.
+                    </h3>
+                </div>
+
+                <div class="text-card text-card-3">
+                    <p class="card-title-script">
+                        Но вот что в моих мыслях. Ты, Я и заснеженный Центральный парк в Нью-Йорке. Мысли о нашей скорой встрече.
+                    </p>
+                </div>
+
+                <div class="text-card text-card-4">
+                    <h3 class="card-title-large">И в декабре 2026 мы обязательно встретимся.</h3>
+                    <p class="card-subtitle">Я обещаю 💝</p>
+                </div>
+            </div>
+
+            <div class="cta-container">
+                <a href="MAP.html" class="btn-primary" id="ctaBtn">
+                    В ПУТЬ!
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ========================================
+           ТАЙМЕР ОБРАТНОГО ОТСЧЕТА (1 декабря 2026)
+           ======================================== */
+        const targetDate = new Date(2026, 11, 1, 0, 0, 0).getTime();
+        const daysElement = document.getElementById('days');
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        let countdownInterval = null;
+
+        function formatNumber(num) {
+            return num < 10 ? '0' + num : String(num);
+        }
+
+        function updateCountdown() {
+            const now = Date.now();
+            const distance = targetDate - now;
+
+            if (distance <= 0) {
+                if (countdownInterval) clearInterval(countdownInterval);
+                daysElement.textContent = '00';
+                hoursElement.textContent = '00';
+                minutesElement.textContent = '00';
+                secondsElement.textContent = '00';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            daysElement.textContent = days;
+            hoursElement.textContent = formatNumber(hours);
+            minutesElement.textContent = formatNumber(minutes);
+            secondsElement.textContent = formatNumber(seconds);
+        }
+
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
+
+        /* ========================================
+           ПЕРЕХОД НА КАРТУ + СБРОС BFCACHE
+           ======================================== */
+        let isTransitioning = false;
+        const ctaBtn = document.getElementById('ctaBtn');
+
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted || document.documentElement.classList.contains('page-exit')) {
+                isTransitioning = false;
+                document.documentElement.classList.remove('page-exit');
+            }
+        });
+
+        ctaBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            const href = this.getAttribute('href');
+
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            ripple.classList.add('ripple');
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+
+            document.documentElement.classList.add('page-exit');
+            setTimeout(() => {
+                window.location.href = href;
+            }, 1000);
+        });
+
+        /* ========================================
+           ПАДАЮЩИЙ СНЕГ
+           ======================================== */
+        const snowflakesContainer = document.getElementById('snowflakesContainer');
+        const FLAKES = 35;
+
+        for (let i = 0; i < FLAKES; i++) {
+            const flake = document.createElement('div');
+            flake.className = 'snowflake';
+            flake.textContent = Math.random() > 0.5 ? '❅' : '❆';
+            const duration = 8 + Math.random() * 6;
+            flake.style.left = Math.random() * 100 + '%';
+            flake.style.fontSize = (0.9 + Math.random() * 0.8) + 'rem';
+            flake.style.opacity = (0.45 + Math.random() * 0.45).toFixed(2);
+            flake.style.animationDuration = duration + 's';
+            flake.style.animationDelay = (-Math.random() * duration) + 's';
+            snowflakesContainer.appendChild(flake);
+        }
+    </script>
+</body>
+</html>
