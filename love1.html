@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Февраль: День Святого Валентина ❤️</title>
+
+    <!-- Google Fonts (добавлен кириллический рукописный Marck Script) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&family=Marck+Script&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================================
+           МЯГКИЕ ПЕРЕХОДЫ МЕЖДУ СТРАНИЦАМИ
+           ======================================== */
+        @keyframes pageEnter {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes pageExit {
+            0%   { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        @keyframes slideInTop {
+            from { transform: translateY(-100%); }
+            to   { transform: translateY(0); }
+        }
+        @keyframes slideInBottom {
+            from { transform: translateY(100%); }
+            to   { transform: translateY(0); }
+        }
+
+        html.page-exit body {
+            animation: pageExit 1s ease-in-out forwards;
+        }
+        html.page-exit::before,
+        html.page-exit::after {
+            content: '';
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 50vh;
+            background: #000;
+            z-index: 9999;
+            animation: 1s ease-in-out forwards;
+            pointer-events: none;
+        }
+        html.page-exit::before {
+            top: 0;
+            animation-name: slideInTop;
+        }
+        html.page-exit::after {
+            bottom: 0;
+            animation-name: slideInBottom;
+        }
+
+        :root {
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --font-script: 'Marck Script', cursive;
+
+            --font-size-h1: 3rem;
+            --font-size-body: 1.05rem;
+
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+            --valentine-color: #a4244f;
+            --valentine-light: #d4486c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            font-size: var(--font-size-body);
+            font-weight: 300;
+            line-height: 1.7;
+            color: #2C2C2C;
+            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 50%, #ffd0e0 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+            animation: pageEnter 1.2s ease-out;
+        }
+
+        .main-container {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg) var(--spacing-lg) 96px;
+        }
+
+        /* ========================================
+           ЗАГОЛОВОК
+           ======================================== */
+        .month-header {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            animation: fadeInDown 1s ease-out;
+            position: relative;
+            z-index: 20;
+            padding: 0 64px;
+        }
+
+        .month-title {
+            font-family: var(--font-heading);
+            font-size: var(--font-size-h1);
+            font-weight: 700;
+            color: var(--valentine-color);
+            text-shadow:
+                2px 2px 4px rgba(0, 0, 0, 0.08),
+                0 0 20px rgba(164, 36, 79, 0.25);
+        }
+
+        /* ========================================
+           КАРТОЧКА С 3D-ПЕРЕВОРОТОМ
+           ======================================== */
+        .card-container {
+            perspective: 1500px;
+            width: 100%;
+            max-width: 580px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 20;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .card-flipper {
+            position: relative;
+            width: 100%;
+            height: 460px;
+            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card-flipper.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-front {
+            background: #FFFFFF;
+            border: 4px solid var(--valentine-color);
+        }
+
+        .valentine-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: var(--spacing-lg);
+            display: block;
+        }
+
+        .card-back {
+            background: rgba(255, 255, 255, 0.96);
+            transform: rotateY(180deg);
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            overflow-x: hidden;
+            border: 4px solid var(--valentine-color);
+            align-items: flex-start;
+        }
+
+        .card-back::-webkit-scrollbar {
+            width: 8px;
+        }
+        .card-back::-webkit-scrollbar-track {
+            background: rgba(164, 36, 79, 0.1);
+            border-radius: 10px;
+        }
+        .card-back::-webkit-scrollbar-thumb {
+            background: rgba(164, 36, 79, 0.5);
+            border-radius: 10px;
+        }
+        .card-back::-webkit-scrollbar-thumb:hover {
+            background: rgba(164, 36, 79, 0.8);
+        }
+
+        .letter-content {
+            text-align: center;
+            width: 100%;
+            margin: auto 0;
+        }
+
+        .hearts-decoration {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.5rem;
+        }
+
+        .letter-title {
+            font-family: var(--font-script);
+            font-size: 2.3rem;
+            color: var(--valentine-color);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.3;
+        }
+
+        .letter-text {
+            font-family: var(--font-body);
+            font-size: 0.98rem;
+            font-weight: 400;
+            line-height: 1.65;
+            color: var(--valentine-color);
+            margin-bottom: var(--spacing-sm);
+            padding: 0 0.5rem;
+        }
+
+        .letter-ps {
+            font-family: var(--font-body);
+            font-size: 0.86rem;
+            font-style: italic;
+            color: rgba(164, 36, 79, 0.75);
+            margin-top: var(--spacing-md);
+            padding: 0 0.5rem;
+            line-height: 1.5;
+        }
+
+        .click-hint {
+            text-align: center;
+            margin-top: var(--spacing-md);
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: rgba(164, 36, 79, 0.85);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50%      { opacity: 0.5; }
+        }
+
+        /* ========================================
+           НАВИГАЦИЯ
+           ======================================== */
+        .back-arrow {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            width: 54px;
+            height: 54px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--valentine-color);
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            z-index: 200;
+            text-decoration: none;
+        }
+
+        .back-arrow:hover {
+            transform: scale(1.08) translateX(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+        }
+
+        .floating-nav {
+            position: fixed;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            padding: 0 22px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .floating-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.75);
+            background: rgba(248, 252, 255, 0.28);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #f8f9fa;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            pointer-events: auto;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 7px 22px rgba(0, 0, 0, 0.38);
+            background: rgba(248, 252, 255, 0.45);
+        }
+
+        .floating-btn .icon-map {
+            font-size: 1.4rem;
+            line-height: 1;
+        }
+
+        /* ========================================
+           ДЕКОРАТИВНЫЕ АМУРЫ
+           ======================================== */
+        .cupid {
+            position: fixed;
+            width: 170px;
+            height: 170px;
+            z-index: 1;
+            pointer-events: none;
+            object-fit: contain;
+            object-position: center;
+            filter: brightness(1.05) contrast(1.08);
+        }
+
+        .cupid-1 { top: 14%; left: 4%; animation: float 6s ease-in-out infinite; }
+        .cupid-2 { top: 14%; right: 4%; animation: float 7s ease-in-out infinite 1s; }
+        .cupid-3 { bottom: 14%; left: 4%; animation: float 8s ease-in-out infinite 2s; }
+        .cupid-4 { bottom: 14%; right: 4%; animation: float 9s ease-in-out infinite 3s; }
+        .cupid-5 { top: 42%; left: 14%; animation: float 6.5s ease-in-out infinite 0.5s; }
+        .cupid-6 { bottom: 8%; left: 26%; animation: float 7.5s ease-in-out infinite 1.5s; }
+        .cupid-7 { top: 36%; right: 14%; animation: float 8.5s ease-in-out infinite 2.5s; }
+        .cupid-8 { bottom: 8%; right: 24%; animation: float 9s ease-in-out infinite 3s; }
+        .cupid-9 { top: 10%; left: 22%; animation: float 8s ease-in-out infinite 1.8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(-5deg); }
+            50%      { transform: translateY(-18px) rotate(5deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           АДАПТИВНОСТЬ
+           ======================================== */
+        @media (max-width: 1200px) {
+            .cupid-5, .cupid-6, .cupid-7, .cupid-8, .cupid-9 {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --font-size-h1: 1.9rem;
+            }
+
+            .main-container {
+                padding: 88px 16px 96px;
+            }
+
+            .month-header {
+                padding: 0 12px;
+                margin-bottom: var(--spacing-md);
+            }
+
+            .card-flipper {
+                height: 400px;
+            }
+
+            .card-back {
+                padding: var(--spacing-md);
+            }
+
+            .letter-title {
+                font-size: 1.8rem;
+            }
+
+            .letter-text {
+                font-size: 0.92rem;
+            }
+
+            .cupid {
+                width: 90px;
+                height: 90px;
+                opacity: 0.85;
+            }
+
+            .back-arrow {
+                top: 16px;
+                left: 16px;
+                width: 46px;
+                height: 46px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <a href="letter.html" class="back-arrow" onclick="handlePageTransition(event)" aria-label="Назад к письму">
+            ←
+        </a>
+
+        <!-- Декоративные амуры -->
+        <img src="images/CUP1.png" alt="" aria-hidden="true" class="cupid cupid-1">
+        <img src="images/CUP3.png" alt="" aria-hidden="true" class="cupid cupid-2">
+        <img src="images/CUP2.png" alt="" aria-hidden="true" class="cupid cupid-3">
+        <img src="images/CUP4.png" alt="" aria-hidden="true" class="cupid cupid-4">
+        <img src="images/CUP5.png" alt="" aria-hidden="true" class="cupid cupid-5">
+        <img src="images/CUP6.png" alt="" aria-hidden="true" class="cupid cupid-6">
+        <img src="images/CUP7.png" alt="" aria-hidden="true" class="cupid cupid-7">
+        <img src="images/CUP8.png" alt="" aria-hidden="true" class="cupid cupid-8">
+        <img src="images/CUP9.png" alt="" aria-hidden="true" class="cupid cupid-9">
+
+        <header class="month-header">
+            <h1 class="month-title">Февраль: День Святого Валентина ❤️</h1>
+        </header>
+
+        <div class="card-container">
+            <div class="card-flipper" id="cardFlipper" role="button" tabindex="0" aria-label="Перевернуть валентинку">
+                <div class="card-face card-front">
+                    <img src="images/feb22.png" alt="Валентинка" class="valentine-image">
+                </div>
+
+                <div class="card-face card-back">
+                    <div class="letter-content">
+                        <div class="hearts-decoration">❤️ 💕 💖</div>
+                        <h2 class="letter-title">Скоро праздник чувств!</h2>
+                        <p class="letter-text">
+                            В этом феврале — особенный день, когда сердца говорят громче слов…
+                        </p>
+                        <p class="letter-text">
+                            Пусть тебя окружает любовь, вдохновение и сладкое предвкушение — скоро кое-что для тебя приготовлено!
+                        </p>
+                        <p class="letter-text">
+                            Ожидай сюрприз с купидоном и валентинкой 💌
+                        </p>
+                        <p class="letter-ps">
+                            P.S. Сердца и стрелы уже летят к тебе! Готовься к подарку и отмечай на календаре 14 февраля
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="click-hint">👆 Нажми, чтобы перевернуть</div>
+        </div>
+
+        <nav class="floating-nav">
+            <a href="MAP.html" class="floating-btn" onclick="handlePageTransition(event)" title="MAP" aria-label="Карта">
+                <span class="icon-map">🗺️</span>
+            </a>
+            <a href="birthday.html" class="floating-btn" onclick="handlePageTransition(event)" title="День рождения" aria-label="День рождения">
+                M
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        const cardFlipper = document.getElementById('cardFlipper');
+
+        cardFlipper.addEventListener('click', function () {
+            this.classList.toggle('flipped');
+        });
+
+        cardFlipper.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.classList.toggle('flipped');
+            }
+        });
+
+        let isTransitioning = false;
+
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted || document.documentElement.classList.contains('page-exit')) {
+                isTransitioning = false;
+                document.documentElement.classList.remove('page-exit');
+            }
+        });
+
+        function handlePageTransition(event) {
+            event.preventDefault();
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            const href = event.currentTarget.getAttribute('href');
+            document.documentElement.classList.add('page-exit');
+
+            setTimeout(() => {
+                window.location.href = href;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
